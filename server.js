@@ -17,7 +17,8 @@ const facebook = require('./facebook');
 passport.use(new Strategy({
   clientID: process.env.FB_CLIENT_ID,
   clientSecret: process.env.FB_CLIENT_SECRET,
-  callbackURL: 'http://localhost/login/callback'
+  callbackURL: 'http://localhost/login/callback',
+  profileFields: ['id', 'email', 'displayName']
 },
   function (accessToken, refreshToken, profile, cb) {
     // In this example, the user's Facebook profile is supplied as the user
@@ -26,6 +27,7 @@ passport.use(new Strategy({
     // allows for account linking and authentication with other identity
     // providers.
     console.log(accessToken);
+    console.dir(profile);
     return cb(null, profile);
   }));
 
@@ -77,7 +79,7 @@ app.get('/login',
   });
 
 app.get('/login/facebook',
-  passport.authenticate('facebook'));
+  passport.authenticate('facebook', { scope: ['email'] }));
 
 app.get('/login/callback',
   passport.authenticate('facebook', { failureRedirect: '/login' }),
